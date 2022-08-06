@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO   
+import time
 
 # DC motors
 in1 = 23 
