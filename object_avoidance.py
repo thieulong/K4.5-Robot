@@ -2,6 +2,7 @@ from dc_motors import forward, backward, stop, turn_left, turn_right
 from servo import look_left, look_right, look_straight
 from distance import get_distance
 from lcd import write_lcd, clear_lcd
+from getkey import getkey
 import time
 
 write_lcd(first_line=' ANTI-COLLISION', second_line='     READY')
@@ -37,5 +38,3 @@ while True:
         look_straight()
         forward()
     time.sleep(0.2)
-        
-

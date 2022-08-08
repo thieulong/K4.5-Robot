@@ -43,6 +43,7 @@ def on_release(key):
     if key == keyboard.Key.esc:
         return False
     
+    
     if key.char == 'x':
         write_lcd(first_line='SAFE-GUARD MODE', second_line='   ACTIVATED')
         with mp_pose.Pose(
@@ -51,15 +52,16 @@ def on_release(key):
         
             while cam.isOpened():
                 success, image = cam.read()
-                image_hight, image_width, _ = image.shape
+                image_height, image_width, _ = image.shape
             
                 if not success:
-                    print("Ignoring empty camera frame.")
                     continue
 
                 image.flags.writeable = False
                 
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    
+    
                 results = pose.process(image)
 
                 image.flags.writeable = True
