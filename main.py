@@ -13,7 +13,7 @@ def on_release(key):
     if key.char == 'g':
         print("X Button pressed")
         write_lcd(first_line='SELECT MODE:', second_line=' MANUAL CONTROL')
-        import console_control
+        os.system('python3 ~/RPI-Project-Rover/manual-control.py')
         
     if key.char == 'h':
         print("B Button pressed")
