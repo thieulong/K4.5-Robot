@@ -28,8 +28,8 @@ GPIO.output(in4,GPIO.LOW)
 pr = GPIO.PWM(ena,1000)
 pl = GPIO.PWM(enb,1000)
 
-pr.start(100)
-pl.start(100)
+pr.start(80)
+pl.start(80)
 
         
 # DC Motors functions
