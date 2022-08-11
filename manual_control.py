@@ -63,7 +63,7 @@ def on_release(key):
                 
                 if not results.pose_landmarks:
                     write_lcd(first_line='    ALERT!', second_line='  PERSON LEFT!')
-                    cv2.imwrite('detection/safe-keeping.png', image)
+                    cv2.imwrite('images/safe-keeping.png', image)
                     message.telegram(chat_id=message.telegram_chat_id, status='safe-keeping mode')
                     cam.release()
                     break
@@ -112,7 +112,7 @@ def on_release(key):
                                 color= (0,0,255),
                                 thickness= 1)
                     
-                    cv2.imwrite('detection/safe-guard.png', image)
+                    cv2.imwrite('images/safe-guard.png', image)
                     message.telegram(chat_id=message.telegram_chat_id, status='safe-guard mode')
                     cam.release()
                     break

@@ -12,14 +12,21 @@ def telegram(chat_id, status):
             text="[ALERT] Detected someone in the area!")
 
         telegram_bot.sendPhoto(chat_id=chat_id,
-                    photo=open("detection/safe-guard.png", "rb"))
+                    photo=open("images/safe-guard.png", "rb"))
         
     elif status == "safe-keeping mode":
         telegram_bot.sendMessage(chat_id=chat_id,
             text="[ALERT] Detected the person has left the area!")
         
         telegram_bot.sendPhoto(chat_id=chat_id,
-                    photo=open("detection/safe-keeping.png", "rb"))
+                    photo=open("images/safe-keeping.png", "rb"))
+        
+    elif status == "photo mode":
+        telegram_bot.sendMessage(chat_id=chat_id,
+            text="[INFO] Photo taken!")
+        
+        telegram_bot.sendPhoto(chat_id=chat_id,
+                    photo=open("images/photo.png", "rb"))
     
 # Test message function
 # telegram(chat_id=telegram_chat_id)
