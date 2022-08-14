@@ -27,6 +27,8 @@ try:
 
     while True:
         
+        write_lcd(first_line='SELECT MODE:', second_line=' VOICE COMMANDS')
+        
         pcm = audio_stream.read(porcupine.frame_length)
         pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
