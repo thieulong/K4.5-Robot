@@ -16,6 +16,8 @@ model = tensorflow.keras.models.load_model("lstm-model.h5", compile=False)
 
 lm_list = []
 
+label = "neutral"
+
 def make_landmark_timestep(results):
     
     print(results.pose_landmarks.landmark)
