@@ -4,6 +4,7 @@ import time
 import threading
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from dc_motors import forward, stop, turn_left, turn_right
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -17,31 +18,21 @@ starting_time = time.time()
 frame_id = 0
 
 y_head_coords = []
-label = ""
-
-# def fall_detect(y_head_coords):
-#     global label
-#     start = y_head_coords[0]
-#     end = y_head_coords[-1]
-#     if end > start:
-#         label = "Fall Detected!"
-#         print("Fall detected")
-#     else:
-#         label = ""
+label = "" 
 
 def fall_detect(y_head_coords):
     global label
-    x = np.array(range(0,len(y_head_coords))).reshape((-1,1))
-    y = np.array(y_head_coords)
+    if all(i>0 for i in y_head_coords):
+        x = np.array(range(0,len(y_head_coords))).reshape((-1,1))
+        y = np.array(y_head_coords)
 
-    model = LinearRegression()
-    model = LinearRegression().fit(x, y)
+        model.fit(x, y)
 
-    if model.coef_ > 5:
-        label = "Fall Detected!"
-        print("Fall detected")
-    else:
-        label = ""
+        if model.coef_[0] > 25:
+            label = "Fall Detected!"
+            print("Fall detected")
+        else:
+            label = ""
         
 with mp_pose.Pose(
 min_detection_confidence=0.8,
@@ -79,7 +70,7 @@ min_tracking_confidence=0.8) as pose:
 
             y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
             y_head_coords.append(y_head)
-            if len(y_head_coords) == 20:
+            if len(y_head_coords) == 5:
                 thread = threading.Thread(target=fall_detect, args=(y_head_coords, ))
                 thread.start()
                 y_head_coords = []
