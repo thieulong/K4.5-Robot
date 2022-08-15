@@ -4,7 +4,11 @@ import time
 import threading
 import numpy as np
 from sklearn.linear_model import LinearRegression
-from dc_motors import forward, stop, turn_left, turn_right
+import dc_motors
+import play_sound
+
+dc_motors.pl.ChangeDutyCycle(70)
+dc_motors.pr.ChangeDutyCycle(70)
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -20,6 +24,9 @@ frame_id = 0
 y_head_coords = []
 label = "" 
 
+def fall_detect_sound_effect():
+    play_sound.play_sound_effect(sound=play_sound.fall_detect)
+
 def fall_detect(y_head_coords):
     global label
     if all(i>0 for i in y_head_coords):
@@ -30,7 +37,8 @@ def fall_detect(y_head_coords):
 
         if model.coef_[0] > 25:
             label = "Fall Detected!"
-            print("Fall detected")
+            fall_detect_thread = threading.Thread(target=fall_detect_sound_effect)
+            fall_detect_thread.start()
         else:
             label = ""
         
@@ -41,6 +49,9 @@ min_tracking_confidence=0.8) as pose:
     while cam.isOpened():
         success, image = cam.read()
         image_height, image_width, _ = image.shape
+
+        border_left = int((image_width/2) - ((image_width/2)/2) + (((image_width/2)/2)/2))
+        border_right = int((image_width/2) + ((image_width/2)/2) - (((image_width/2)/2)/2))
 
         frame_id += 1
 
@@ -68,26 +79,34 @@ min_tracking_confidence=0.8) as pose:
             width = max(x_cordinate) - min(x_cordinate)
             height = max(y_cordinate) - min(y_cordinate)
 
-            y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
-            y_head_coords.append(y_head)
-            if len(y_head_coords) == 5:
-                thread = threading.Thread(target=fall_detect, args=(y_head_coords, ))
-                thread.start()
-                y_head_coords = []
+            x_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x * image_width
+            if x_head < border_right and x_head > border_left:
+                y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
+                y_head_coords.append(y_head)
+                if len(y_head_coords) == 5:
+                    thread = threading.Thread(target=fall_detect, args=(y_head_coords, ))
+                    thread.start()
+                    y_head_coords = []
 
-            if width > height:
-                cv2.rectangle(img=image,
-                            pt1=(min(x_cordinate), max(y_cordinate)),
-                            pt2 =(max(x_cordinate), min(y_cordinate)-25),
-                            color=(0,0,255),
-                            thickness=1)
+                if width > height:
+                    cv2.rectangle(img=image,
+                                pt1=(min(x_cordinate), max(y_cordinate)),
+                                pt2 =(max(x_cordinate), min(y_cordinate)-25),
+                                color=(0,0,255),
+                                thickness=1)
 
-            else:
-                cv2.rectangle(img=image,
-                            pt1=(min(x_cordinate), max(y_cordinate)),
-                            pt2=(max(x_cordinate), min(y_cordinate)-25),
-                            color=(0,255,0),
-                            thickness=1)
+                else:
+                    cv2.rectangle(img=image,
+                                pt1=(min(x_cordinate), max(y_cordinate)),
+                                pt2=(max(x_cordinate), min(y_cordinate)-25),
+                                color=(0,255,0),
+                                thickness=1)
+
+            if x_head > border_right:
+                dc_motors.turn_right()
+            
+            if x_head < border_left:
+                dc_motors.turn_left()
 
         cv2.putText(img=image,
                     text=label,

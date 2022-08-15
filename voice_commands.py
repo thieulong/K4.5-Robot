@@ -1,4 +1,5 @@
 import struct
+import threading
 import pyaudio
 import pvporcupine
 import speech_recognition   
@@ -6,9 +7,16 @@ from lcd import write_lcd, clear_lcd
 from dc_motors import forward, backward, turn_left, turn_right, stop
 import message
 import time
+import play_sound
 
 rec = speech_recognition.Recognizer()
 speech = speech_recognition.Microphone(device_index=3)
+
+def voice_recognition_confirm_sound_effect():
+    play_sound.play_sound_effect(sound=play_sound.confirm)
+
+def voice_recognition_processing_sound_effect():
+    play_sound.play_sound_effect(sound=play_sound.processing)
 
 try:
 
@@ -35,7 +43,8 @@ try:
         keyword_index = porcupine.process(pcm)
 
         if keyword_index == 0:
-            print("Someone call me!")
+            confirm_sound_thread = threading.Thread(target=voice_recognition_confirm_sound_effect)
+            confirm_sound_thread.start()
             write_lcd(first_line="     ALERT", second_line="Recognized name")
             forward()
             time.sleep(0.2)
@@ -60,6 +69,13 @@ try:
                 write_lcd(first_line="Network problem", second_line="Try again later")
                 print("\nNetwork problems, please try again later!")
             else:
+                porcessing_sound_thread = threading.Thread(target=voice_recognition_processing_sound_effect)
+                porcessing_sound_thread.start()
+                if any(word.lower() in text for word in ["bark",]):
+                    write_lcd(first_line="Recognized:", second_line="   Barking")
+                    play_sound.play_sound_effect(sound=play_sound.bark)
+                    stop()
+                    continue
                 if any(word.lower() in text for word in ["photo", "picture",]):
                     write_lcd(first_line="Recognized:", second_line="Taking a photo")
                     import photo_capture
