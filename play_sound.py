@@ -1,6 +1,6 @@
-from pygame import mixer
-
-mixer.init()
+from concurrent.futures import process
+from pydub import AudioSegment
+from pydub.playback import play
 
 dir = "sounds/"
 
@@ -12,6 +12,8 @@ safe_guard = dir+"safe-guard.wav"
 safe_keeping = dir+"safe-keeping.wav"
 
 def play_sound_effect(sound):
-    mixer.music.load(sound)
-    mixer.music.play()
-    mixer.music.stop()
+    song = AudioSegment.from_wav(sound)
+    play(song)
+
+play_sound_effect(sound=confirm)
+

@@ -1,7 +1,9 @@
-from pynput import keyboard
+from pynput import keyboardh
 from lcd import write_lcd, clear_lcd
 import os
 import RPi.GPIO as GPIO  
+
+GPIO.setwarnings(False)
 
 def on_release(key):
     
@@ -9,7 +11,7 @@ def on_release(key):
         write_lcd(first_line='SELECT MODE:', second_line=' ANTI-COLLISION')
         os.system('python3 ~/RPI-Project-Rover/anti_collision.py')
         
-    if key.charh == 'g':
+    if key.char == 'g':
         write_lcd(first_line='SELECT MODE:', second_line=' MANUAL CONTROL')
         os.system('python3 ~/RPI-Project-Rover/manual_control.py')
         

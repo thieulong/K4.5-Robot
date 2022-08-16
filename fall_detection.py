@@ -81,6 +81,7 @@ min_tracking_confidence=0.8) as pose:
 
             x_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x * image_width
             if x_head < border_right and x_head > border_left:
+                dc_motors.stop()
                 y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
                 y_head_coords.append(y_head)
                 if len(y_head_coords) == 5:
