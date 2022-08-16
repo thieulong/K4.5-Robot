@@ -27,6 +27,16 @@ def telegram(chat_id, status):
         
         telegram_bot.sendPhoto(chat_id=chat_id,
                     photo=open("images/photo.png", "rb"))
+        
+    elif status == "fall detection mode":
+        telegram_bot.sendMessage(chat_id=chat_id,
+            text="[ALERT] Detect a person fall!")
+        
+        telegram_bot.sendPhoto(chat_id=chat_id,
+                    photo=open("images/fall-detect.png", "rb"))
+        
+        telegram_bot.sendMessage(chat_id=chat_id,
+            text="Call emercengy: 000")
     
 # Test message function
 # telegram(chat_id=telegram_chat_id)

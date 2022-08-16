@@ -1,9 +1,11 @@
-from pynput import keyboardh
+from pynput import keyboard
 from lcd import write_lcd, clear_lcd
 import os
 import RPi.GPIO as GPIO  
 
 GPIO.setwarnings(False)
+
+write_lcd(first_line='SELECT MODE:', second_line='NO MODE SELECTED')
 
 def on_release(key):
     

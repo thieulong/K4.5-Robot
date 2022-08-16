@@ -6,9 +6,13 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import dc_motors
 import play_sound
+from lcd import write_lcd, clear_lcd
+import message
 
-dc_motors.pl.ChangeDutyCycle(70)
-dc_motors.pr.ChangeDutyCycle(70)
+write_lcd(first_line=' FALL DETECTION', second_line='  ATIVATED!')
+
+dc_motors.pl.ChangeDutyCycle(80)
+dc_motors.pr.ChangeDutyCycle(80)
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -27,7 +31,7 @@ label = ""
 def fall_detect_sound_effect():
     play_sound.play_sound_effect(sound=play_sound.fall_detect)
 
-def fall_detect(y_head_coords):
+def fall_detect(y_head_coords, image):
     global label
     if all(i>0 for i in y_head_coords):
         x = np.array(range(0,len(y_head_coords))).reshape((-1,1))
@@ -39,6 +43,9 @@ def fall_detect(y_head_coords):
             label = "Fall Detected!"
             fall_detect_thread = threading.Thread(target=fall_detect_sound_effect)
             fall_detect_thread.start()
+            write_lcd(first_line="    ALERT!", second_line="DETECT PERSON FALL")
+            cv2.imwrite("images/fall-detect.png", image)
+            message.telegram(chat_id=message.telegram_chat_id, status="fall detection mode")
         else:
             label = ""
         
@@ -85,11 +92,11 @@ min_tracking_confidence=0.8) as pose:
                 y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
                 y_head_coords.append(y_head)
                 if len(y_head_coords) == 5:
-                    thread = threading.Thread(target=fall_detect, args=(y_head_coords, ))
+                    thread = threading.Thread(target=fall_detect, args=(y_head_coords, image, ))
                     thread.start()
                     y_head_coords = []
 
-                if width > height:
+                if label == "Fall Detected!":
                     cv2.rectangle(img=image,
                                 pt1=(min(x_cordinate), max(y_cordinate)),
                                 pt2 =(max(x_cordinate), min(y_cordinate)-25),

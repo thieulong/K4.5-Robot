@@ -15,5 +15,5 @@ def play_sound_effect(sound):
     song = AudioSegment.from_wav(sound)
     play(song)
 
-play_sound_effect(sound=confirm)
+
 
