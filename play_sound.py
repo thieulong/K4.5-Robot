@@ -10,6 +10,7 @@ fall_detect = dir+"fall-detect.wav"
 processing = dir+"processing.wav"
 safe_guard = dir+"safe-guard.wav"
 safe_keeping = dir+"safe-keeping.wav"
+wake_up = dir+"chrissy_wake_up.mp3"
 
 def play_sound_effect(sound):
     song = AudioSegment.from_wav(sound)

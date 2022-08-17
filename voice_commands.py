@@ -9,6 +9,8 @@ import message
 import time
 import play_sound
 
+write_lcd(first_line='SELECT MODE:', second_line=' VOICE COMMANDS')
+
 rec = speech_recognition.Recognizer()
 speech = speech_recognition.Microphone(device_index=3)
 
@@ -34,8 +36,6 @@ try:
                     frames_per_buffer=porcupine.frame_length)
 
     while True:
-        
-        write_lcd(first_line='SELECT MODE:', second_line=' VOICE COMMANDS')
         
         pcm = audio_stream.read(porcupine.frame_length)
         pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
@@ -71,18 +71,14 @@ try:
             else:
                 porcessing_sound_thread = threading.Thread(target=voice_recognition_processing_sound_effect)
                 porcessing_sound_thread.start()
-                if any(word.lower() in text for word in ["bark",]):
-                    write_lcd(first_line="Recognized:", second_line="   Barking")
-                    play_sound.play_sound_effect(sound=play_sound.bark)
-                    stop()
-                    continue
+
                 if any(word.lower() in text for word in ["photo", "picture",]):
                     write_lcd(first_line="Recognized:", second_line="Taking a photo")
                     import photo_capture
                     message.telegram(chat_id=message.telegram_chat_id, status = "photo mode")
                     stop()
                     continue
-                if any(word.lower() in text for word in ["back", "down",]):
+                if any(word.lower() in text for word in ["back", "down"]):
                     write_lcd(first_line="Recognized:", second_line="Moving backward")
                     backward()
                     time.sleep(1)

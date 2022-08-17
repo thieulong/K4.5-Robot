@@ -75,16 +75,35 @@ min_tracking_confidence=0.8) as pose:
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         
         if results.pose_landmarks:
-            x_cordinate = list()
-            y_cordinate = list()
+            x_coordinate = list()
+            y_coordinate = list()
             for id, lm in enumerate(results.pose_landmarks.landmark):
                 h, w, c = image.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
-                x_cordinate.append(cx)
-                y_cordinate.append(cy)
+                x_coordinate.append(cx)
+                y_coordinate.append(cy)
+                
+            cv2.rectangle(img=image,
+                                pt1=(min(x_coordinate), max(y_coordinate)),
+                                pt2=(max(x_coordinate), min(y_coordinate)-25),
+                                color=(0,255,0),
+                                thickness=2)
+            cv2.rectangle(img=image,
+                                pt1=(max(x_coordinate), min(y_coordinate)-50),
+                                pt2=(min(x_coordinate), min(y_coordinate)-25),
+                                color=(0,255,0),
+                                thickness=-1)
+            
+            cv2.putText(img=image,
+                    text="Person",
+                    org=(min(x_coordinate)+10,min(y_coordinate)-30),
+                    fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                    fontScale=0.7,
+                    color=(255,255,255),
+                    thickness=1)
 
-            width = max(x_cordinate) - min(x_cordinate)
-            height = max(y_cordinate) - min(y_cordinate)
+            width = max(x_coordinate) - min(x_coordinate)
+            height = max(y_coordinate) - min(y_coordinate)
 
             x_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x * image_width
             if x_head < border_right and x_head > border_left:
@@ -97,19 +116,30 @@ min_tracking_confidence=0.8) as pose:
                     y_head_coords = []
 
                 if label == "Fall Detected!":
+
                     cv2.rectangle(img=image,
-                                pt1=(min(x_cordinate), max(y_cordinate)),
-                                pt2 =(max(x_cordinate), min(y_cordinate)-25),
+                                pt1=(min(x_coordinate), max(y_coordinate)),
+                                pt2 =(max(x_coordinate), min(y_coordinate)-25),
                                 color=(0,0,255),
-                                thickness=1)
-
-                else:
+                                thickness=3)
                     cv2.rectangle(img=image,
-                                pt1=(min(x_cordinate), max(y_cordinate)),
-                                pt2=(max(x_cordinate), min(y_cordinate)-25),
-                                color=(0,255,0),
-                                thickness=1)
-
+                                pt1=(max(x_coordinate), min(y_coordinate)-50),
+                                pt2=(min(x_coordinate), min(y_coordinate)-25),
+                                color=(0,0,255),
+                                thickness=-1)
+            
+                    cv2.putText(img=image,
+                            text="Person fell",
+                            org=(min(x_coordinate)+10,min(y_coordinate)-30),
+                            fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                            fontScale=0.7,
+                            color=(255,255,255),
+                            thickness=1)
+                    
+                    cam.release()
+                    cv2.destroyAllWindows()
+                    break
+                    
             if x_head > border_right:
                 dc_motors.turn_right()
             
