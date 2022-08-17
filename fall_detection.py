@@ -36,10 +36,12 @@ def fall_detect(y_head_coords, image):
     if all(i>0 for i in y_head_coords):
         x = np.array(range(0,len(y_head_coords))).reshape((-1,1))
         y = np.array(y_head_coords)
+        
 
         model.fit(x, y)
 
         if model.coef_[0] > 25:
+            print(model.coef_[0])
             label = "Fall Detected!"
             fall_detect_thread = threading.Thread(target=fall_detect_sound_effect)
             fall_detect_thread.start()
@@ -87,20 +89,7 @@ min_tracking_confidence=0.8) as pose:
                                 pt1=(min(x_coordinate), max(y_coordinate)),
                                 pt2=(max(x_coordinate), min(y_coordinate)-25),
                                 color=(0,255,0),
-                                thickness=2)
-            cv2.rectangle(img=image,
-                                pt1=(max(x_coordinate), min(y_coordinate)-50),
-                                pt2=(min(x_coordinate), min(y_coordinate)-25),
-                                color=(0,255,0),
-                                thickness=-1)
-            
-            cv2.putText(img=image,
-                    text="Person",
-                    org=(min(x_coordinate)+10,min(y_coordinate)-30),
-                    fontFace=cv2.FONT_HERSHEY_COMPLEX,
-                    fontScale=0.7,
-                    color=(255,255,255),
-                    thickness=1)
+                                thickness=1)
 
             width = max(x_coordinate) - min(x_coordinate)
             height = max(y_coordinate) - min(y_coordinate)
@@ -111,6 +100,7 @@ min_tracking_confidence=0.8) as pose:
                 y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
                 y_head_coords.append(y_head)
                 if len(y_head_coords) == 5:
+                    print(y_head_coords)
                     thread = threading.Thread(target=fall_detect, args=(y_head_coords, image, ))
                     thread.start()
                     y_head_coords = []
@@ -121,20 +111,7 @@ min_tracking_confidence=0.8) as pose:
                                 pt1=(min(x_coordinate), max(y_coordinate)),
                                 pt2 =(max(x_coordinate), min(y_coordinate)-25),
                                 color=(0,0,255),
-                                thickness=3)
-                    cv2.rectangle(img=image,
-                                pt1=(max(x_coordinate), min(y_coordinate)-50),
-                                pt2=(min(x_coordinate), min(y_coordinate)-25),
-                                color=(0,0,255),
-                                thickness=-1)
-            
-                    cv2.putText(img=image,
-                            text="Person fell",
-                            org=(min(x_coordinate)+10,min(y_coordinate)-30),
-                            fontFace=cv2.FONT_HERSHEY_COMPLEX,
-                            fontScale=0.7,
-                            color=(255,255,255),
-                            thickness=1)
+                                thickness=1)
                     
                     cam.release()
                     cv2.destroyAllWindows()
