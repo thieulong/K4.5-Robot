@@ -18,5 +18,5 @@ def clear_lcd():
     except ModuleNotFoundError:
         pass
     
-## Test LCD code
+# Test LCD code
 # write_lcd(first_line='Hello there!', second_line='Robotics project')

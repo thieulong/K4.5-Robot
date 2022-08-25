@@ -8,7 +8,7 @@ in3 = 17
 in4 = 27
 
 ena = 25
-enb = 4
+enb = 16
 
 # Setup
 GPIO.setmode(GPIO.BCM)
@@ -33,15 +33,15 @@ pl.start(80)
 
         
 # DC Motors functions
-def forward():
-    print("Forward")
-    GPIO.output(in1,GPIO.HIGH)
-    GPIO.output(in2,GPIO.LOW)
+def backward():
+    print("Backward")
+    GPIO.output(in1,GPIO.LOW)
+    GPIO.output(in2,GPIO.HIGH)
     GPIO.output(in3,GPIO.HIGH)
     GPIO.output(in4,GPIO.LOW)
     
-def backward():
-    print("Backward")
+def turn_left():
+    print("Turning left")
     GPIO.output(in1,GPIO.LOW)
     GPIO.output(in2,GPIO.HIGH)
     GPIO.output(in3,GPIO.LOW)
@@ -54,8 +54,8 @@ def stop():
     GPIO.output(in3,GPIO.LOW)
     GPIO.output(in4,GPIO.LOW)
     
-def turn_left():
-    print("Turning left")
+def forward():
+    print("Forward")
     GPIO.output(in1,GPIO.HIGH)
     GPIO.output(in2,GPIO.LOW)
     GPIO.output(in3,GPIO.LOW)
@@ -63,8 +63,8 @@ def turn_left():
     
 def turn_right():
     print("Turning right")
-    GPIO.output(in1,GPIO.LOW)
-    GPIO.output(in2,GPIO.HIGH)
+    GPIO.output(in1,GPIO.HIGH)
+    GPIO.output(in2,GPIO.LOW)
     GPIO.output(in3,GPIO.HIGH)
     GPIO.output(in4,GPIO.LOW)
     

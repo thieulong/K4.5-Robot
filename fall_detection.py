@@ -9,10 +9,10 @@ import play_sound
 from lcd import write_lcd, clear_lcd
 import message
 
-write_lcd(first_line=' FALL DETECTION', second_line='  ATIVATED!')
+write_lcd(first_line=' FALL DETECTION', second_line='    ATIVATED')
 
-dc_motors.pl.ChangeDutyCycle(80)
-dc_motors.pr.ChangeDutyCycle(80)
+dc_motors.pl.ChangeDutyCycle(25)
+dc_motors.pr.ChangeDutyCycle(25)
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -45,7 +45,7 @@ def fall_detect(y_head_coords, image):
             label = "Fall Detected!"
             fall_detect_thread = threading.Thread(target=fall_detect_sound_effect)
             fall_detect_thread.start()
-            write_lcd(first_line="    ALERT!", second_line="DETECT PERSON FALL")
+            write_lcd(first_line="    ALERT!", second_line=" FALL DETECTED")
             cv2.imwrite("images/fall-detect.png", image)
             message.telegram(chat_id=message.telegram_chat_id, status="fall detection mode")
         else:
@@ -94,8 +94,11 @@ min_tracking_confidence=0.8) as pose:
             width = max(x_coordinate) - min(x_coordinate)
             height = max(y_coordinate) - min(y_coordinate)
 
-            x_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x * image_width
-            if x_head < border_right and x_head > border_left:
+            left_shoulder = results.pose_landmarks.landmark[11].x * image_width
+            right_shoulder = results.pose_landmarks.landmark[12].x * image_width
+            center = (right_shoulder + left_shoulder) / 2
+            
+            if center < border_right and center > border_left:
                 dc_motors.stop()
                 y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
                 y_head_coords.append(y_head)
@@ -117,10 +120,10 @@ min_tracking_confidence=0.8) as pose:
                     cv2.destroyAllWindows()
                     break
                     
-            if x_head > border_right:
+            if center > border_right:
                 dc_motors.turn_right()
             
-            if x_head < border_left:
+            if center < border_left:
                 dc_motors.turn_left()
 
         cv2.putText(img=image,
