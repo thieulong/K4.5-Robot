@@ -91,7 +91,7 @@ try:
                     os.system('python3 ~/RPI-Project-Rover/fall_detection.py')
                     stop()
                     continue
-                if any(word in text.lower() for word in ["follow", "me"]):
+                if any(word in text.lower() for word in ["follow"]):
                     write_lcd(first_line="Recognized:", second_line="    Follow Me")
                     os.system('python3 ~/RPI-Project-Rover/follow_me.py')
                     stop()
