@@ -50,15 +50,16 @@ try:
             confirm_sound_thread.start()
             write_lcd(first_line="     ALERT", second_line="Recognized name")
             forward()
-            time.sleep(0.2)
+            time.sleep(0.3)
             stop()
             with speech as source:
+                rec.adjust_for_ambient_noise(source=source, duration=0.5)
                 write_lcd(first_line=" K4.5 Rover Bot", second_line=" Listening ...")
                 print(" Listening ...")
-                audio = rec.listen(source)
+                audio = rec.listen(source, phrase_time_limit=5)
             try:
                 write_lcd(first_line=" K4.5 Rover Bot", second_line="Processing ...")
-                text = rec.recognize_google(audio, language = 'en-US')
+                text = rec.recognize_google(audio)
                 print("\nCommand: {}".format(text))
             except speech_recognition.UnknownValueError:
                 write_lcd(first_line="Trouble hearing", second_line=" Please repeat!")
@@ -98,6 +99,11 @@ try:
                 if any(word in text.lower() for word in ["manual", "control", "spy"]):
                     write_lcd(first_line="Recognized:", second_line="    Spy Mode")
                     os.system('python3 ~/RPI-Project-Rover/spy_mode.py')
+                    stop()
+                    continue
+                if any(word in text.lower() for word in ["message"]):
+                    write_lcd(first_line="Recognized:", second_line=" Message Mode")
+                    os.system('python3 ~/RPI-Project-Rover/retrieve_message.py')
                     stop()
                     continue
                 if any(word in text.lower() for word in ["back", "down"]):
