@@ -96,9 +96,14 @@ try:
                     os.system('python3 ~/RPI-Project-Rover/follow_me.py')
                     stop()
                     continue
-                if any(word in text.lower() for word in ["manual", "control", "spy"]):
-                    write_lcd(first_line="Recognized:", second_line="    Spy Mode")
+                if any(word in text.lower() for word in ["manual", "spy"]):
+                    write_lcd(first_line="Recognized:", second_line="  Sync Control")
                     os.system('python3 ~/RPI-Project-Rover/spy_mode.py')
+                    stop()
+                    continue
+                if any(word in text.lower() for word in ["control", "sync"]):
+                    write_lcd(first_line="Recognized:", second_line="    Spy Mode")
+                    os.system('python3 ~/RPI-Project-Rover/arduino_communication.py')
                     stop()
                     continue
                 if any(word in text.lower() for word in ["message"]):
