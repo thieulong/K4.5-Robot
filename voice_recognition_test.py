@@ -4,20 +4,11 @@
 
 import speech_recognition as sr
 import pyttsx3
+import calculate
 
 # Initialize the recognizer
 r = sr.Recognizer()
 
-# Function to convert text to
-# speech
-def SpeakText(command):
-	
-	# Initialize the engine
-	engine = pyttsx3.init()
-	engine.say(command)
-	engine.runAndWait()
-	
-	
 # Loop infinitely for user to
 # speak
 
@@ -42,8 +33,19 @@ while(1):
 			MyText = r.recognize_google(audio2)
 			MyText = MyText.lower()
 
-			print("Did you say "+MyText)
-			SpeakText(MyText)
+			print(MyText)
+
+			if any(word in MyText.lower() for word in ["add", "plus", "+"]): calculate.addition(MyText)
+				
+			
+			if any(word in MyText.lower() for word in ["subtract", "minus", "-"]): calculate.subtraction(MyText)
+    			
+
+			if any(word in MyText.lower() for word in ["multiply", "x"]): calculate.multiplication(MyText)
+    			
+
+			if any(word in MyText.lower() for word in ["divide", "/"]): calculate.addition(MyText)
+    			
 			
 	except sr.RequestError as e:
 		print("Could not request results; {0}".format(e))

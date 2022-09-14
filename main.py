@@ -5,6 +5,7 @@ import pvporcupine
 import speech_recognition   
 from lcd import write_lcd, clear_lcd
 from dc_motors import forward, backward, turn_left, turn_right, stop
+import calculate
 import message
 import time
 import play_sound
@@ -76,6 +77,16 @@ try:
                     import photo_capture
                     message.telegram(chat_id=message.telegram_chat_id, status = "photo mode")
                     stop()
+                    continue
+                if any(word in text.lower() for word in ["how much"]):
+                    if any(word in text.lower() for word in ["add", "plus", "+"]):
+                        calculate.addition(text)
+                    if any(word in text.lower() for word in ["subtract", "minus", "-"]):
+                        calculate.subtraction(text)
+                    if any(word in text.lower() for word in ["multiply", "x"]):
+                        calculate.multiplication(text)
+                    if any(word in text.lower() for word in ["divide", "/"]):
+                        calculate.division(text)
                     continue
                 if any(word in text.lower() for word in ["safe", "save"]):
                     if any(word in text.lower() for word in ["keeping", "keep"]):

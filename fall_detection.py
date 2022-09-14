@@ -11,9 +11,6 @@ import message
 
 write_lcd(first_line=' FALL DETECTION', second_line='    ATIVATED')
 
-dc_motors.pl.ChangeDutyCycle(25)
-dc_motors.pr.ChangeDutyCycle(25)
-
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
@@ -90,41 +87,28 @@ min_tracking_confidence=0.8) as pose:
                                 pt2=(max(x_coordinate), min(y_coordinate)-25),
                                 color=(0,255,0),
                                 thickness=1)
-
-            width = max(x_coordinate) - min(x_coordinate)
-            height = max(y_coordinate) - min(y_coordinate)
-
-            left_shoulder = results.pose_landmarks.landmark[11].x * image_width
-            right_shoulder = results.pose_landmarks.landmark[12].x * image_width
-            center = (right_shoulder + left_shoulder) / 2
             
-            if center < border_right and center > border_left:
-                dc_motors.stop()
-                y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
-                y_head_coords.append(y_head)
-                if len(y_head_coords) == 5:
-                    print(y_head_coords)
-                    thread = threading.Thread(target=fall_detect, args=(y_head_coords, image, ))
-                    thread.start()
-                    y_head_coords = []
-
-                if label == "Fall Detected!":
-
-                    cv2.rectangle(img=image,
-                                pt1=(min(x_coordinate), max(y_coordinate)),
-                                pt2 =(max(x_coordinate), min(y_coordinate)-25),
-                                color=(0,0,255),
-                                thickness=1)
-                    
-                    cam.release()
-                    cv2.destroyAllWindows()
-                    break
-                    
-            if center > border_right:
-                dc_motors.turn_right()
+            y_head = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height
+            y_head_coords.append(y_head)
             
-            if center < border_left:
-                dc_motors.turn_left()
+            if len(y_head_coords) == 5:
+                print(y_head_coords)
+                thread = threading.Thread(target=fall_detect, args=(y_head_coords, image, ))
+                thread.start()
+                y_head_coords = []
+
+            if label == "Fall Detected!":
+
+                cv2.rectangle(img=image,
+                            pt1=(min(x_coordinate), max(y_coordinate)),
+                            pt2 =(max(x_coordinate), min(y_coordinate)-25),
+                            color=(0,0,255),
+                            thickness=1)
+                
+                cam.release()
+                cv2.destroyAllWindows()
+                break
+                    
 
         cv2.putText(img=image,
                     text=label,
