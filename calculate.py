@@ -1,4 +1,7 @@
-from dc_motors import turn_left, turn_right
+from dc_motors import turn_left, turn_right, stop
+import time
+
+spin = 1.175
 
 def addition(result):
     
@@ -11,6 +14,9 @@ def addition(result):
 
         answer = num1 + num2
         print(num1,'+',num2,'=',answer)
+        turn_right()
+        time.sleep(spin*answer)
+        stop()
 
     except Exception:
 
@@ -27,6 +33,9 @@ def subtraction(result):
 
         answer = num1 - num2
         print(num1,'-',num2,'=',answer)
+        turn_left()
+        time.sleep(spin*answer)
+        stop()
 
     except Exception:
 
@@ -43,6 +52,9 @@ def multiplication(result):
 
         answer = num1 * num2
         print(num1,'x',num2,'=',answer)
+        turn_right()
+        time.sleep(spin*answer)
+        stop()
 
     except Exception:
 
@@ -59,6 +71,9 @@ def division(result):
 
         answer = num1 / num2
         print(num1,'/',num2,'=',answer)
+        turn_left()
+        time.sleep(spin*answer)
+        stop()
 
     except Exception:
 
