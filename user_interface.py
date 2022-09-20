@@ -6,12 +6,16 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import *
 from dc_motors import forward, backward, turn_left, turn_right, stop
 import calculate
-import sys
+import play_sound
 import time
+import os
+import sys
 
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.engine_flag = 0
 
         self.setStyleSheet("background-color: white;")
 
@@ -46,7 +50,19 @@ class Window(QMainWindow):
         
         self.command_box.setPlaceholderText("Enter command")
 
+        # Label
+
+        self.label = QLabel(self)
+
+        status = QPixmap("interface-images/engine_stop.jpg")
+
+        self.label.setPixmap(status)
+
+        self.label.setGeometry(300,150,50,50)
+
         # Buttons
+
+        button_start_stop = QPushButton(self)
 
         button_up = QPushButton(self)
 
@@ -55,6 +71,8 @@ class Window(QMainWindow):
         button_left = QPushButton(self)
 
         button_right = QPushButton(self)
+
+        button_stop = QPushButton(self)
 
         command_button = QPushButton(self)
 
@@ -68,6 +86,8 @@ class Window(QMainWindow):
 
         # Geometry
 
+        button_start_stop.setGeometry(50,150,100,100)
+
         button_up.setGeometry(150, 150, 100, 100)
 
         button_down.setGeometry(150, 350, 100, 100)
@@ -75,6 +95,8 @@ class Window(QMainWindow):
         button_left.setGeometry(50, 250, 100, 100)
 
         button_right.setGeometry(250, 250, 100, 100)
+
+        button_stop.setGeometry(150,250,100,100)
 
         command_button.setGeometry(900,150,50,50)
 
@@ -94,6 +116,8 @@ class Window(QMainWindow):
 
         # Connect to function
 
+        button_start_stop.clicked.connect(self.start_stop_engine)
+
         button_up.clicked.connect(self.robot_move_forward)
 
         button_down.clicked.connect(self.robot_move_backward)
@@ -102,9 +126,21 @@ class Window(QMainWindow):
 
         button_right.clicked.connect(self.robot_turn_right)
 
+        button_stop.clicked.connect(self.robot_stop)
+
         command_button.clicked.connect(self.retrieve_command)
 
+        safe_keeping_button.clicked.connect(self.robot_safe_keeping)
+
+        safe_guard_button.clicked.connect(self.robot_safe_guard)
+
+        fall_detection_button.clicked.connect(self.robot_fall_detect)
+
+        spy_mode_button.clicked.connect(self.robot_spy_mode)
+
         # Button image
+
+        button_start_stop.setStyleSheet("background-image : url(interface-images/start_stop_button.jpg); border-image: url(interface-images/start_stop_button.jpg)")
 
         button_up.setStyleSheet("background-image : url(interface-images/up-arrow.png); border-image: url(interface-images/up-arrow.png)")
 
@@ -114,32 +150,86 @@ class Window(QMainWindow):
 
         button_right.setStyleSheet("background-image : url(interface-images/right-arrow.png); border-image: url(interface-images/right-arrow.png)")
 
+        button_stop.setStyleSheet("background-image : url(interface-images/stop_button.jpg); border-image: url(interface-images/stop_button.jpg)")
+
         command_button.setStyleSheet("background-image : url(interface-images/upload.png); border-image: url(interface-images/upload.png)")
 
+    
+    def start_stop_engine(self):
+        
+        if self.engine_flag == 0:
+
+            status = QPixmap("interface-images/engine_start.png")
+
+            self.engine_flag += 1
+
+            self.label.setPixmap(status)
+
+            play_sound.play_sound_effect(sound=play_sound.start_engine)
+
+        elif self.engine_flag == 1:
+
+            self.engine_flag -= 1
+
+            status = QPixmap("interface-images/engine_stop.jpg")
+
+            self.label.setPixmap(status)
+
+    def robot_stop(self):
+
+        if self.engine_flag == 1:
+
+            print("Stopped moving")
+
+            stop()
 
     def robot_move_forward(self):
-    
-        print("Moving forward")
 
-        forward()
+        if self.engine_flag == 1:
+    
+            print("Moving forward")
+
+            forward()
 
     def robot_move_backward(self):
-    
-        print("Moving backward")
 
-        backward()
+        if self.engine_flag == 1:
+    
+            print("Moving backward")
+
+            backward()
 
     def robot_turn_left(self):
 
-        print("Turning left")
+        if self.engine_flag == 1:
 
-        turn_left()
+            print("Turning left")
+
+            turn_left()
 
     def robot_turn_right(self):
-    
-        print("Turning right")
 
-        turn_right()
+        if self.engine_flag == 1:
+    
+            print("Turning right")
+
+            turn_right()
+
+    def robot_safe_keeping(self):
+
+        os.system('python3 ~/RPI-Project-Rover/safe_keeping.py')
+
+    def robot_safe_guard(self):
+
+        os.system('python3 ~/RPI-Project-Rover/safe_guard.py')
+
+    def robot_fall_detect(self):
+
+        os.system('python3 ~/RPI-Project-Rover/fall_detection.py')
+
+    def robot_spy_mode(self):
+
+        os.system('python3 ~/RPI-Project-Rover/spy_mode.py')
 
     def retrieve_command(self):
 
@@ -147,53 +237,55 @@ class Window(QMainWindow):
 
         self.command_box.setText("")
 
-        if any(word in command.lower() for word in ["+"]): calculate.addition(command)
-            
-        if any(word in command.lower() for word in ["-"]): calculate.subtraction(command)
-            
-        if any(word in command.lower() for word in ["*", "x"]): calculate.multiplication(command)
-            
-        if any(word in command.lower() for word in [":", "/"]): calculate.division(command)  
-                             
-        if any(word in command.lower() for word in ["forward"]):
+        if self.engine_flag == 1:
 
-            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+            if any(word in command.lower() for word in ["+"]): calculate.addition(command)
+                
+            if any(word in command.lower() for word in ["-"]): calculate.subtraction(command)
+                
+            if any(word in command.lower() for word in ["*", "x"]): calculate.multiplication(command)
+                
+            if any(word in command.lower() for word in [":", "/"]): calculate.division(command)  
+                                
+            if any(word in command.lower() for word in ["forward"]):
 
-            forward()
+                duration = [int(s) for s in command.split() if s.isdigit()][-1]
 
-            time.sleep(duration)
+                forward()
 
-            stop()
+                time.sleep(duration)
 
-        if any(word in command.lower() for word in ["backward"]):
-    
-            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+                stop()
 
-            backward()
+            if any(word in command.lower() for word in ["backward"]):
+        
+                duration = [int(s) for s in command.split() if s.isdigit()][-1]
 
-            time.sleep(duration)
+                backward()
 
-            stop()
+                time.sleep(duration)
 
-        if any(word in command.lower() for word in ["left"]):
-    
-            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+                stop()
 
-            turn_left()
+            if any(word in command.lower() for word in ["left"]):
+        
+                duration = [int(s) for s in command.split() if s.isdigit()][-1]
 
-            time.sleep(duration)
+                turn_left()
 
-            stop()
+                time.sleep(duration)
 
-        if any(word in command.lower() for word in ["right"]):
-    
-            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+                stop()
 
-            turn_right()
+            if any(word in command.lower() for word in ["right"]):
+        
+                duration = [int(s) for s in command.split() if s.isdigit()][-1]
 
-            time.sleep(duration)
+                turn_right()
 
-            stop()
+                time.sleep(duration)
+
+                stop()
 
 App = QApplication(sys.argv)
 
