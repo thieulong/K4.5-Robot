@@ -4,8 +4,10 @@ from tkinter import Button
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 from PyQt5.QtGui import *
+from dc_motors import forward, backward, turn_left, turn_right, stop
+import calculate
 import sys
-
+import time
 
 class Window(QMainWindow):
     def __init__(self):
@@ -119,17 +121,25 @@ class Window(QMainWindow):
     
         print("Moving forward")
 
+        forward()
+
     def robot_move_backward(self):
     
         print("Moving backward")
+
+        backward()
 
     def robot_turn_left(self):
 
         print("Turning left")
 
+        turn_left()
+
     def robot_turn_right(self):
     
         print("Turning right")
+
+        turn_right()
 
     def retrieve_command(self):
 
@@ -137,8 +147,53 @@ class Window(QMainWindow):
 
         self.command_box.setText("")
 
-        print(command)        
+        if any(word in command.lower() for word in ["+"]): calculate.addition(command)
+            
+        if any(word in command.lower() for word in ["-"]): calculate.subtraction(command)
+            
+        if any(word in command.lower() for word in ["*", "x"]): calculate.multiplication(command)
+            
+        if any(word in command.lower() for word in [":", "/"]): calculate.division(command)  
+                             
+        if any(word in command.lower() for word in ["forward"]):
 
+            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+
+            forward()
+
+            time.sleep(duration)
+
+            stop()
+
+        if any(word in command.lower() for word in ["backward"]):
+    
+            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+
+            backward()
+
+            time.sleep(duration)
+
+            stop()
+
+        if any(word in command.lower() for word in ["left"]):
+    
+            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+
+            turn_left()
+
+            time.sleep(duration)
+
+            stop()
+
+        if any(word in command.lower() for word in ["right"]):
+    
+            duration = [int(s) for s in command.split() if s.isdigit()][-1]
+
+            turn_right()
+
+            time.sleep(duration)
+
+            stop()
 
 App = QApplication(sys.argv)
 
