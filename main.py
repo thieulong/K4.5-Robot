@@ -78,15 +78,14 @@ try:
                     message.telegram(chat_id=message.telegram_chat_id, status = "photo mode")
                     stop()
                     continue
-                if any(word in text.lower() for word in ["how much"]):
-                    if any(word in text.lower() for word in ["add", "plus", "+"]):
-                        calculate.addition(text)
-                    if any(word in text.lower() for word in ["subtract", "minus", "-"]):
-                        calculate.subtraction(text)
-                    if any(word in text.lower() for word in ["multiply", "x"]):
-                        calculate.multiplication(text)
-                    if any(word in text.lower() for word in ["divide", "/"]):
-                        calculate.division(text)
+                if any(word in text.split() for word in ["add", "plus", "+"]):
+                    calculate.addition(text)
+                if any(word in text.split() for word in ["subtract", "minus", "-"]):
+                    calculate.subtraction(text)
+                if any(word in text.split() for word in ["multiply", "x"]):
+                    calculate.multiplication(text)
+                if any(word in text.split() for word in ["divide", "/"]):
+                    calculate.division(text)
                     continue
                 if any(word in text.lower() for word in ["safe", "save"]):
                     if any(word in text.lower() for word in ["keeping", "keep"]):

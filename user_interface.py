@@ -216,36 +216,52 @@ class Window(QMainWindow):
             turn_right()
 
     def robot_safe_keeping(self):
-
-        os.system('python3 ~/RPI-Project-Rover/safe_keeping.py')
-
-    def robot_safe_guard(self):
-
-        os.system('python3 ~/RPI-Project-Rover/safe_guard.py')
-
-    def robot_fall_detect(self):
-
-        os.system('python3 ~/RPI-Project-Rover/fall_detection.py')
-
-    def robot_spy_mode(self):
-
-        os.system('python3 ~/RPI-Project-Rover/spy_mode.py')
-
-    def retrieve_command(self):
-
-        command = self.command_box.text()
-
-        self.command_box.setText("")
-
+        
         if self.engine_flag == 1:
 
-            if any(word in command.lower() for word in ["+"]): calculate.addition(command)
+            os.system('python3 ~/RPI-Project-Rover/interface-safe_keeping.py')
+
+    def robot_safe_guard(self):
+        
+        if self.engine_flag == 1:
+
+            os.system('python3 ~/RPI-Project-Rover/interface-safe_guard.py')
+
+    def robot_fall_detect(self):
+        
+        if self.engine_flag == 1:
+
+            os.system('python3 ~/RPI-Project-Rover/interface-fall_detection.py')
+
+    def robot_spy_mode(self):
+        
+        if self.engine_flag == 1:
+
+            os.system('python3 ~/RPI-Project-Rover/interface-spy_mode.py')
+
+    def retrieve_command(self):
+        
+        if self.engine_flag == 1:
+
+            command = self.command_box.text()
+
+            self.command_box.setText("")
+
+            if "+" in command: 
                 
-            if any(word in command.lower() for word in ["-"]): calculate.subtraction(command)
+                calculate.addition(command)
                 
-            if any(word in command.lower() for word in ["*", "x"]): calculate.multiplication(command)
+            if "-" in command: 
                 
-            if any(word in command.lower() for word in [":", "/"]): calculate.division(command)  
+                calculate.subtraction(command)
+                
+            if "*" in command: 
+                
+                calculate.multiplication(command)
+                
+            if "/" in command: 
+                
+                calculate.division(command)  
                                 
             if any(word in command.lower() for word in ["forward"]):
 

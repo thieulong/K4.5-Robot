@@ -13,6 +13,10 @@ safe_keeping = dir+"safe-keeping.wav"
 wake_up = dir+"chrissy_wake_up.mp3"
 start_engine = dir+"start_engine.wav"
 
+def play_sound_effect(sound):
+    sound_effect = AudioSegment.from_wav(sound)
+    play(sound_effect)
+    
 
 
 
