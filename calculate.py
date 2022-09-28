@@ -1,7 +1,7 @@
 from dc_motors import turn_left, turn_right, stop
 import time
 
-spin = 1.175
+spin = 0.8
 
 def addition(result):
     

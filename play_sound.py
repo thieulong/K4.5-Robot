@@ -4,7 +4,6 @@ from pydub.playback import play
 
 dir = "sounds/"
 
-bark = "bark.wav"
 confirm = dir+"confirm.wav"
 fall_detect = dir+"fall-detect.wav"
 processing = dir+"processing.wav"
@@ -17,6 +16,5 @@ def play_sound_effect(sound):
     sound_effect = AudioSegment.from_wav(sound)
     play(sound_effect)
     
-
 
 
