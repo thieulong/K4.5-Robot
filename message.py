@@ -1,6 +1,6 @@
 import telepot
 
-telegram_bot = telepot.Bot(token="5490662868:AAEPnTkoa9qbEIl7eH1v80eTlhbPx7m9Ywg")
+telegram_bot = telepot.Bot(token="")
 
 telegram_chat_id = '1921540131'
 
